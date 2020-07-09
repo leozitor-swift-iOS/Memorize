@@ -8,26 +8,25 @@
 import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
-    @Published private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
+    @Published private var model: (theme: Theme, memoryGame: MemoryGame<String>) = EmojiMemoryGame.createMemoryGame()
     static var theme: Theme?
     
     static var themes = [
         Theme(name: "Faces", emojis: ["😍", "🤩", "🥺", "🤓", "😎", "🥴", "😳", "🤠", "🥶"], numberOfPairsOfCards: nil, color: Color.orange),
-        Theme(name: "Flags", emojis: ["🇧🇷", "🇺🇸","🇯🇵", "🇹🇯", "🇨🇮", "🇧🇪", "🇮🇸", "🇨🇦", "🇮🇳", "🇰🇷", "🇧🇾"], numberOfPairsOfCards: 4, color: Color.white),
+        Theme(name: "Flags", emojis: ["🇧🇷", "🇺🇸","🇯🇵", "🇹🇯", "🇨🇮", "🇧🇪", "🇮🇸", "🇨🇦", "🇮🇳", "🇰🇷", "🇧🇾"], numberOfPairsOfCards: 4, color: Color.gray),
         Theme(name: "Animals", emojis: ["🐶", "🐱", "🐭", "🐹", "🐰", "🐻", "🐼", "🐨", "🐯", "🦁"], numberOfPairsOfCards: 5, color: Color.green),
         Theme(name: "Cars", emojis: ["🚔", "🚍", "🚘", "🚖", "🚇"], numberOfPairsOfCards: nil, color: Color.blue),
         Theme(name: "Balls", emojis: ["⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🎱"], numberOfPairsOfCards: 3, color: Color.yellow),
         Theme(name: "Fruits", emojis: ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🍈"], numberOfPairsOfCards: nil, color: Color.purple),
     ]
     
-    
-    static func createMemoryGame() -> MemoryGame<String> {
+    static func createMemoryGame() -> (Theme, MemoryGame<String>) {
         theme = EmojiMemoryGame.themes[Int.random(in: 0..<EmojiMemoryGame.themes.count)]
-        var emojis = theme!.emojis
-        emojis = emojis.shuffled()
-        return MemoryGame<String>(numberOfPairsOfCards: emojis.count) { pairIndex in
+        let emojis = theme!.emojis.shuffled()
+        let game = (theme!, MemoryGame<String>(numberOfPairsOfCards: emojis.count) { pairIndex in
             emojis[pairIndex]
-        }
+        })
+        return game
     }
     
     struct Theme {
@@ -39,19 +38,25 @@ class EmojiMemoryGame: ObservableObject {
     }
     
     // MARK - Acess to the Model
-    
     var cards: Array<MemoryGame<String>.Card> {
-        model.cards
+        model.memoryGame.cards
     }
-    
+    var score: Int {
+        model.memoryGame.score
+    }
+    var theme: Theme {
+        model.theme
+    }
     
     // MARK - Intent(s)
-    
     func choose(card: MemoryGame<String>.Card) {
-        model.choose(card: card)
+        model.memoryGame.choose(card: card)
     }
-}
+    func resetGame() {
+        model = EmojiMemoryGame.createMemoryGame()
+    }
 
+}
 
 struct EmojiMemoryGame_Previews: PreviewProvider {
     static var previews: some View {

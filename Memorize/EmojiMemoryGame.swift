@@ -14,16 +14,16 @@ class EmojiMemoryGame: ObservableObject {
     static var themes = [
         Theme(name: "Faces", emojis: ["😍", "🤩", "🥺", "🤓", "😎", "🥴", "😳", "🤠", "🥶"], numberOfPairsOfCards: nil, color: Color.orange),
         Theme(name: "Flags", emojis: ["🇧🇷", "🇺🇸","🇯🇵", "🇹🇯", "🇨🇮", "🇧🇪", "🇮🇸", "🇨🇦", "🇮🇳", "🇰🇷", "🇧🇾"], numberOfPairsOfCards: 4, color: Color.gray),
-        Theme(name: "Animals", emojis: ["🐶", "🐱", "🐭", "🐹", "🐰", "🐻", "🐼", "🐨", "🐯", "🦁"], numberOfPairsOfCards: 5, color: Color.green),
-        Theme(name: "Cars", emojis: ["🚔", "🚍", "🚘", "🚖", "🚇"], numberOfPairsOfCards: nil, color: Color.blue),
+        Theme(name: "Animals", emojis: ["🐶", "🐱", "🐭", "🐹", "🐰", "🐻", "🐼", "🐨", "🐯", "🦁"], numberOfPairsOfCards: 6, color: Color.green),
+        Theme(name: "Cars", emojis: ["🚔", "🚍", "🚘", "🚖", "🚇", "🚆", "🚋", "🚝", "🚂"], numberOfPairsOfCards: nil, color: Color.blue),
         Theme(name: "Balls", emojis: ["⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🎱"], numberOfPairsOfCards: 3, color: Color.yellow),
         Theme(name: "Fruits", emojis: ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🍈"], numberOfPairsOfCards: nil, color: Color.purple),
     ]
     
-    static func createMemoryGame() -> (Theme, MemoryGame<String>) {
+    private static func createMemoryGame() -> (Theme, MemoryGame<String>) {
         theme = EmojiMemoryGame.themes[Int.random(in: 0..<EmojiMemoryGame.themes.count)]
         let emojis = theme!.emojis.shuffled()
-        let game = (theme!, MemoryGame<String>(numberOfPairsOfCards: emojis.count) { pairIndex in
+        let game = (theme!, MemoryGame<String>(numberOfPairsOfCards: theme!.numberOfPairOfCardsToShow) { pairIndex in
             emojis[pairIndex]
         })
         return game
@@ -33,7 +33,7 @@ class EmojiMemoryGame: ObservableObject {
         var name: String
         var emojis = Array<String>()
         var numberOfPairsOfCards: Int?
-        var numberOfPairOfCardsToShow: Int { numberOfPairsOfCards ?? Int.random(in: 2..<emojis.count)}
+        var numberOfPairOfCardsToShow: Int { numberOfPairsOfCards ?? [2, 3, 4 , 6, 9].randomElement()!}
         var color: Color
     }
     

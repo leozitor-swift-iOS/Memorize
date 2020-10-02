@@ -6,10 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct MemoryGame<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
+    private(set) var theme: Theme
     var score: Int
+    
     
     var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get { cards.indices.filter{ cards[$0].isFaceUp }.only }
@@ -46,8 +49,9 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         }
     }
     
-    init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
+    init(numberOfPairsOfCards: Int, chosenTheme: Theme, cardContentFactory: (Int) -> CardContent) {
         cards = Array<Card>()
+        theme = chosenTheme
         for pairIndex in 0..<numberOfPairsOfCards {
             let content = cardContentFactory(pairIndex)
             cards.append(Card(content: content, id: pairIndex*2))
@@ -56,6 +60,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         cards = cards.shuffled()
         score = 0
     }
+  
     
     struct Card: Identifiable {
         var isFaceUp = false {
@@ -130,3 +135,12 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         }
     }
 }
+
+struct Theme {
+    var name: String
+    var emojis = Array<String>()
+    var numberOfPairsOfCards: Int?
+    var numberOfPairOfCardsToShow: Int { numberOfPairsOfCards ?? [2, 3, 4 , 6, 9].randomElement()!}
+    var color: Color
+}
+

@@ -8,8 +8,8 @@
 import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
-    @Published private var model: (theme: Theme, memoryGame: MemoryGame<String>) = EmojiMemoryGame.createMemoryGame()
-    static var theme: Theme?
+    /*@Published private var model: (theme: Theme, memoryGame: MemoryGame<String>) = EmojiMemoryGame.createMemoryGame() */
+    @Published private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
     
     static var themes = [
         Theme(name: "Faces", emojis: ["😍", "🤩", "🥺", "🤓", "😎", "🥴", "😳", "🤠", "🥶"], numberOfPairsOfCards: nil, color: Color.orange),
@@ -20,46 +20,33 @@ class EmojiMemoryGame: ObservableObject {
         Theme(name: "Fruits", emojis: ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🍈"], numberOfPairsOfCards: nil, color: Color.purple),
     ]
     
-    private static func createMemoryGame() -> (Theme, MemoryGame<String>) {
-        theme = EmojiMemoryGame.themes[Int.random(in: 0..<EmojiMemoryGame.themes.count)]
-        let emojis = theme!.emojis.shuffled()
-        let game = (theme!, MemoryGame<String>(numberOfPairsOfCards: theme!.numberOfPairOfCardsToShow) { pairIndex in
+    private static func createMemoryGame() -> MemoryGame<String> {
+        let theme = themes[Int.random(in: 0..<EmojiMemoryGame.themes.count)]
+        let emojis = theme.emojis.shuffled()
+        let game = MemoryGame<String>(numberOfPairsOfCards: theme.numberOfPairOfCardsToShow, chosenTheme: theme) { pairIndex in
             emojis[pairIndex]
-        })
+        }
         return game
     }
-    
-    struct Theme {
-        var name: String
-        var emojis = Array<String>()
-        var numberOfPairsOfCards: Int?
-        var numberOfPairOfCardsToShow: Int { numberOfPairsOfCards ?? [2, 3, 4 , 6, 9].randomElement()!}
-        var color: Color
-    }
-    
+
     // MARK - Acess to the Model
     var cards: Array<MemoryGame<String>.Card> {
-        model.memoryGame.cards
+        model.cards
     }
     var score: Int {
-        model.memoryGame.score
+        model.score
     }
     var theme: Theme {
         model.theme
     }
     
+    
     // MARK - Intent(s)
     func choose(card: MemoryGame<String>.Card) {
-        model.memoryGame.choose(card: card)
+        model.choose(card: card)
     }
     func resetGame() {
         model = EmojiMemoryGame.createMemoryGame()
     }
 
-}
-
-struct EmojiMemoryGame_Previews: PreviewProvider {
-    static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
-    }
 }
